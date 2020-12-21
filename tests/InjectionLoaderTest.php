@@ -17,7 +17,7 @@
 
             $source = $loader->getSourceContext('test.twig');
 
-            $this->assertSame("{{ __start_coverage_tracer__unittest('test.twig') }}\nI am a template\n{{ __end_coverage_tracer__unittest('test.twig') }}", $source->getCode());
+            $this->assertSame("{{ __start_coverage_tracer__unittest(templateName: 'test.twig') }}\nI am a template\n{{ __end_coverage_tracer__unittest(templateName: 'test.twig') }}", $source->getCode());
         }
 
         private function getMockLoader (string $templateContents, string $templateName = 'test.twig') : LoaderInterface {

@@ -39,7 +39,7 @@
         }
 
         private function wrapSourceCodeInTracerFunctions (string $source, string $templateFilename) : string {
-            return sprintf("{{ %1\$s('%3\$s') }}\n%4\$s\n{{ %2\$s('%3\$s') }}",
+            return sprintf("{{ %1\$s(templateName: '%3\$s') }}\n%4\$s\n{{ %2\$s(templateName: '%3\$s') }}",
                 $this->tracer->getStarterFunctionName(),
                 $this->tracer->getEndingFunctionName(),
                 $templateFilename,
