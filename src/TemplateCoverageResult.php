@@ -27,11 +27,11 @@
         }
 
         function getCalledLines(): array {
-            return array_filter($this->codeCoverageLines, fn(int $calledFlag) => $calledFlag === self::EXECUTION_FLAG_CALLED);
+            return array_keys(array_filter($this->codeCoverageLines, fn(int $calledFlag) => $calledFlag === self::EXECUTION_FLAG_CALLED));
         }
 
         function getUncalledLines(): array {
-            return array_filter($this->codeCoverageLines, fn(int $calledFlag) => $calledFlag === self::EXECUTION_FLAG_UNCALLED);
+            return array_keys(array_filter($this->codeCoverageLines, fn(int $calledFlag) => $calledFlag === self::EXECUTION_FLAG_UNCALLED));
         }
 
         function getAllLinesByCallStatus() : array {
