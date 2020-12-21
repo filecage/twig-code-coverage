@@ -2,6 +2,7 @@
 
     namespace Thomann\TwigCodeCoverage;
 
+    use Thomann\TwigCodeCoverage\TwigAdapter\TracerWrapParser;
     use Twig\Loader\LoaderInterface;
     use Twig\Source;
 
@@ -39,12 +40,13 @@
         }
 
         private function wrapSourceCodeInTracerFunctions (string $source, string $templateFilename) : string {
-            return sprintf("{{ %1\$s(templateName: '%3\$s') }}\n%4\$s\n{{ %2\$s(templateName: '%3\$s') }}",
-                $this->tracer->getStarterFunctionName(),
-                $this->tracer->getEndingFunctionName(),
-                $templateFilename,
-                $source
-            );
+            $tracerStartTag = TracerWrapParser::TWIG_WRAP_TAG_START;
+            $tracerEndBlock = TracerWrapParser::TWIG_WRAP_TAG_END;
+            return <<<TEMPLATE
+                   {% {$tracerStartTag} '{$templateFilename}' %}
+                   {$source}
+                   {% {$tracerEndBlock} %}
+                   TEMPLATE;
         }
 
     }
