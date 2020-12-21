@@ -13,6 +13,7 @@
         }
     },
     "require": {
+        "ext-xdebug": "*",
         "php": "7.4.*",
         "twig/twig": "^3.1"
     },
