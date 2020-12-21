@@ -10,28 +10,74 @@
     class Tracer {
 
         private string $namespace;
+        private RenderEngineCoverageDriver $renderEngineCoverageDriver;
+        private ?NestableCoverage $currentCoverageRun = null;
 
-        /** @var array Array containing the coverages by template filename */
+        /** @var TemplateCoverageResult[] Array containing the coverages by template filename */
         private array $coverages = [];
 
-        function __construct (string $namespace) {
+        function __construct(string $namespace, RenderEngineCoverageDriver $renderEngineCoverageDriver) {
             $this->namespace = $namespace;
+            $this->renderEngineCoverageDriver = $renderEngineCoverageDriver;
         }
 
-        function getCoverages () : array {
+        function getTwigFunctionTraceStart(): TwigFunction {
+            return new TwigFunction($this->getStarterFunctionName(), function ($context, array $options) {
+                // TODO: If there was a parent before we need to add the coverage that has been collected so far here
+                $this->currentCoverageRun = new NestableCoverage($this->getCurrentCalleeLineNumber(), $this->currentCoverageRun);
+                xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
+            });
+        }
+
+        function getTwigFunctionTraceEnd(): TwigFunction {
+            return new TwigFunction($this->getEndingFunctionName(), function ($context, array $options) {
+                $overallCoverageStatistics = xdebug_get_code_coverage();
+                xdebug_stop_code_coverage(true);
+
+                $templateCoverageResult = $this->getRelevantCoverageStatistics($overallCoverageStatistics);
+
+                // Remove tracer parts from the coverage
+                $templateCoverageResult = array_slice($templateCoverageResult, 1, -2, true);
+
+                $this->currentCoverageRun->addCoverageResult($templateCoverageResult);
+                $this->coverages[] = new TemplateCoverageResult($options['templateName'], iterator_to_array($this->currentCoverageRun->finalize($this->getCurrentCalleeLineNumber())));
+
+                $this->currentCoverageRun = $this->currentCoverageRun->getParent();
+            });
+        }
+
+        function getCoverages(): array {
             return $this->coverages;
         }
 
-        function getStarterFunctionName () : string {
+        function getStarterFunctionName(): string {
             return $this->getFunctionName('start');
         }
 
-        function getEndingFunctionName () : string {
+        function getEndingFunctionName(): string {
             return $this->getFunctionName('end');
         }
 
-        private function getFunctionName (string $functionName) : string {
+        private function getFunctionName(string $functionName): string {
             return sprintf('__%s_coverage_tracer__%s', $functionName, $this->namespace);
+        }
+
+        private function getRelevantCoverageStatistics(array $coverageStatistics): array {
+            $renderEngineExecutionKeyRegex = $this->renderEngineCoverageDriver->getExecutionKeyRegularExpression();
+            foreach ($coverageStatistics as $executionKey => $coverageStatistic) {
+                if (preg_match($renderEngineExecutionKeyRegex, $executionKey) === 1) {
+                    return $coverageStatistic;
+                }
+            }
+
+            throw new \RuntimeException("Tracer could not find coverage statistics using execution key regular expression `{$renderEngineExecutionKeyRegex}`");
+        }
+
+        private function getCurrentCalleeLineNumber(): int {
+            $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $this->renderEngineCoverageDriver->getFunctionStackOffset());
+            $actualCallee = array_pop($backtrace);
+
+            return $actualCallee['line'];
         }
 
     }
