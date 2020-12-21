@@ -14,11 +14,11 @@
         private static ?TwigFunction $functionEnd;
 
         static function startTestTracer (string $templateName) {
-            static::$functionStart->getCallable()([], ['templateName' => $templateName]);
+            static::$functionStart->getCallable()($templateName);
         }
 
         static function endTestTracer (string $templateName) {
-            static::$functionEnd->getCallable()([], ['templateName' => $templateName]);
+            static::$functionEnd->getCallable()($templateName);
         }
 
         function testExpectsCorrectTracerFunctionNames () {

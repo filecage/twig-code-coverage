@@ -22,7 +22,7 @@
         }
 
         function getTwigFunctionTraceStart(): TwigFunction {
-            return new TwigFunction($this->getStarterFunctionName(), function ($context, array $options) {
+            return new TwigFunction($this->getStarterFunctionName(), function (string $templateName) {
                 // TODO: If there was a parent before we need to add the coverage that has been collected so far here
                 $this->currentCoverageRun = new NestableCoverage($this->getCurrentCalleeLineNumber(), $this->currentCoverageRun);
                 xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
@@ -30,7 +30,7 @@
         }
 
         function getTwigFunctionTraceEnd(): TwigFunction {
-            return new TwigFunction($this->getEndingFunctionName(), function ($context, array $options) {
+            return new TwigFunction($this->getEndingFunctionName(), function (string $templateName) {
                 $overallCoverageStatistics = xdebug_get_code_coverage();
                 xdebug_stop_code_coverage(true);
 
