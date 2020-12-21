@@ -25,6 +25,9 @@
             return $this->coverages;
         }
 
+        /**
+         * @internal
+         */
         function getTwigFunctionTraceStart(): TwigFunction {
             return new TwigFunction($this->getFunctionName('start'), function (string $templateName) {
                 // TODO: If there was a parent before we need to add the coverage that has been collected so far here
@@ -33,6 +36,9 @@
             });
         }
 
+        /**
+         * @internal
+         */
         function getTwigFunctionTraceEnd(): TwigFunction {
             return new TwigFunction($this->getFunctionName('end'), function (string $templateName) {
                 $overallCoverageStatistics = xdebug_get_code_coverage();
@@ -48,7 +54,7 @@
                 $this->currentCoverageRun = $this->currentCoverageRun->getParent();
             });
         }
-        
+
         private function getFunctionName(string $functionName): string {
             return sprintf('__%s_coverage_tracer__%s', $functionName, $this->namespace);
         }
