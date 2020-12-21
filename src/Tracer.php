@@ -34,13 +34,12 @@
                 $overallCoverageStatistics = xdebug_get_code_coverage();
                 xdebug_stop_code_coverage(true);
 
-                $templateCoverageResult = $this->getRelevantCoverageStatistics($overallCoverageStatistics);
+                $this->currentCoverageRun->addCoverageResult($this->getRelevantCoverageStatistics($overallCoverageStatistics));
+                $templateCoverageResult = iterator_to_array($this->currentCoverageRun->finalize($this->getCurrentCalleeLineNumber()));
 
-                // Remove tracer parts from the coverage
+                // Remove tracer function call parts from the coverage (the closure and the start/stop expressions)
                 $templateCoverageResult = array_slice($templateCoverageResult, 1, -2, true);
-
-                $this->currentCoverageRun->addCoverageResult($templateCoverageResult);
-                $this->coverages[] = new TemplateCoverageResult($options['templateName'], iterator_to_array($this->currentCoverageRun->finalize($this->getCurrentCalleeLineNumber())));
+                $this->coverages[] = new TemplateCoverageResult($templateName, $templateCoverageResult);
 
                 $this->currentCoverageRun = $this->currentCoverageRun->getParent();
             });
