@@ -31,6 +31,7 @@
         function getTwigFunctionTraceStart(): TwigFunction {
             return new TwigFunction($this->getFunctionName('start'), function (string $templateName) {
                 // TODO: If there was a parent before we need to add the coverage that has been collected so far here
+                // TODO: If a template is run twice, we have to sum up the code coverage
                 $this->currentCoverageRun = new NestableCoverage($this->getCurrentCalleeLineNumber(), $this->currentCoverageRun);
                 xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
             });
