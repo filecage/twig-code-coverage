@@ -44,10 +44,7 @@
          */
         function getTwigFunctionTraceEnd(): TwigFunction {
             return new TwigFunction($this->getFunctionName('end'), function (string $templateName) {
-                $overallCoverageStatistics = xdebug_get_code_coverage();
-                xdebug_stop_code_coverage(true);
-
-                $this->currentCoverageRun->addCoverageResult($this->getRelevantCoverageStatistics($overallCoverageStatistics));
+                $this->clearCoverageBufferAndWriteToContainer($this->currentCoverageRun);
                 $templateCoverageResult = iterator_to_array($this->currentCoverageRun->finalize($this->getCurrentCalleeLineNumber()));
 
                 // Remove tracer function call parts from the coverage (the closure and the start/stop expressions)
@@ -56,6 +53,13 @@
 
                 $this->currentCoverageRun = $this->currentCoverageRun->getParent();
             });
+        }
+
+        private function clearCoverageBufferAndWriteToContainer (NestableCoverageContainer $coverageContainer) : void {
+            $overallCoverageStatistics = xdebug_get_code_coverage();
+            xdebug_stop_code_coverage(true);
+
+            $coverageContainer->addCoverageResult($this->getRelevantCoverageStatistics($overallCoverageStatistics));
         }
 
         private function getFunctionName(string $functionName): string {
