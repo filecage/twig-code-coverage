@@ -10,7 +10,6 @@
     class NestableCoverageContainer {
 
         private bool $finalized = false;
-        private string $fileName;
         private int $startingLineNumber;
         private array $coverageLines = [];
         private array $ignoreLines = [];
