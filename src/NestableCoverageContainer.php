@@ -13,11 +13,19 @@
         private string $fileName;
         private int $startingLineNumber;
         private array $coverageLines = [];
+        private array $ignoreLines = [];
         private ?self $parent;
 
         function __construct(int $startingLineNumber, ?self $parent) {
             $this->startingLineNumber = $startingLineNumber;
             $this->parent = $parent;
+        }
+
+        function ignore (int $fromLineNumber, int $toLineNumber) : void {
+            foreach (range($fromLineNumber, $toLineNumber) as $ignoredLineNumber) {
+                $this->ignoreLines[] = $ignoredLineNumber;
+                unset($this->coverageLines[$ignoredLineNumber]);
+            }
         }
 
         function addCoverageResult(array $coverageLines): void {
@@ -26,7 +34,9 @@
             }
 
             foreach ($coverageLines as $lineNumber => $executionFlag) {
-                $this->coverageLines[$lineNumber] = $executionFlag;
+                if (!in_array($lineNumber, $this->ignoreLines)) {
+                    $this->coverageLines[$lineNumber] = $executionFlag;
+                }
             }
         }
 
