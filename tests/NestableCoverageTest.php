@@ -3,12 +3,12 @@
     namespace Thomann\TwigCodeCoverageTests;
 
     use PHPUnit\Framework\TestCase;
-    use Thomann\TwigCodeCoverage\NestableCoverage;
+    use Thomann\TwigCodeCoverage\NestableCoverageContainer;
 
     class NestableCoverageTest extends TestCase {
 
         function testExpectsNestableCoverageToOnlyIterateLinesBetweenStartingAndEndingLine () {
-            $nestableCoverage = new NestableCoverage(4, null);
+            $nestableCoverage = new NestableCoverageContainer(4, null);
             $nestableCoverage->addCoverageResult([1 => false, 2 => false, 6 => true, 8 => true, 12 => false]);
 
             $executedAndFilteredLines = iterator_to_array($nestableCoverage->finalize(10));
@@ -16,7 +16,7 @@
         }
 
         function testExpectsNestableCoverageToThrowExceptionWhenAlteredAfterFinalization () {
-            $nestableCoverage = new NestableCoverage(4, null);
+            $nestableCoverage = new NestableCoverageContainer(4, null);
             $nestableCoverage->addCoverageResult([]);
 
             // Iterator needs to run

@@ -11,7 +11,7 @@
 
         private string $namespace;
         private RenderEngineCoverageDriver $renderEngineCoverageDriver;
-        private ?NestableCoverage $currentCoverageRun = null;
+        private ?NestableCoverageContainer $currentCoverageRun = null;
 
         /** @var TemplateCoverageResult[] Array containing the coverages by template filename */
         private array $coverages = [];
@@ -32,7 +32,7 @@
             return new TwigFunction($this->getFunctionName('start'), function (string $templateName) {
                 // TODO: If there was a parent before we need to add the coverage that has been collected so far here
                 // TODO: If a template is run twice, we have to sum up the code coverage
-                $this->currentCoverageRun = new NestableCoverage($this->getCurrentCalleeLineNumber(), $this->currentCoverageRun);
+                $this->currentCoverageRun = new NestableCoverageContainer($this->getCurrentCalleeLineNumber(), $this->currentCoverageRun);
                 xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
             });
         }

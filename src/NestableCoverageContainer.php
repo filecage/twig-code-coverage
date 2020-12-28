@@ -7,7 +7,7 @@
     /**
      * @internal
      */
-    class NestableCoverage {
+    class NestableCoverageContainer {
 
         private bool $finalized = false;
         private string $fileName;
