@@ -4,8 +4,10 @@
 
     use Thomann\TwigCodeCoverage\TwigAdapter\TracerWrapParser;
     use Thomann\TwigCodeCoverage\TwigAdapter\TwigEngineCoverageDriver;
+    use Thomann\TwigCodeCoverage\TwigAdapter\WrappedTagTokenParser;
     use Twig\Environment;
     use Twig\Loader\LoaderInterface;
+    use Twig\TokenParser\IncludeTokenParser;
 
     class Bootstrapper {
 
@@ -19,6 +21,9 @@
             $twig->addTokenParser(new TracerWrapParser($tracer));
             $twig->addFunction($tracer->getTwigFunctionTraceStart());
             $twig->addFunction($tracer->getTwigFunctionTraceEnd());
+            $twig->addFunction($tracer->getTwigFunctionContinue());
+
+            $twig->addTokenParser(new WrappedTagTokenParser('include', new IncludeTokenParser(), $tracer));
 
             return $twig;
         }
