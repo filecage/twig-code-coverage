@@ -20,8 +20,8 @@
             $this->parent = $parent;
         }
 
-        function ignore (int $fromLineNumber, int $toLineNumber) : void {
-            foreach (range($fromLineNumber, $toLineNumber) as $ignoredLineNumber) {
+        function ignore (int $fromLineNumber, ?int $toLineNumber) : void {
+            foreach (range($fromLineNumber, $toLineNumber ?? $fromLineNumber) as $ignoredLineNumber) {
                 $this->ignoreLines[] = $ignoredLineNumber;
                 unset($this->coverageLines[$ignoredLineNumber]);
             }
