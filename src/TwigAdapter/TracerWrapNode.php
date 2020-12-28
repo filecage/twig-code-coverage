@@ -20,23 +20,23 @@
         }
 
         function compile(Compiler $compiler) {
-            $templateNameArgumentsNode = new Node(['templateName' => new ConstantExpression($this->templateName, $this->lineno)]);
-
+            $tracerArguments = new Node(['templateName' => new ConstantExpression($this->templateName, $this->lineno)]);
             // Start tracing
-            $compiler->subcompile(new FunctionExpression($this->tracer->getTwigFunctionTraceStart()->getName(), $templateNameArgumentsNode, 0), false);
-            $compiler->raw(';');
+            $compiler->subcompile(new TwigFunctionInvocationNode($this->tracer->getTwigFunctionTraceStart(), $tracerArguments), false);
 
             // We need to wrap the code into a closure after starting the tracer
             // This is a known behaviour from xdebug, @see https://bugs.xdebug.org/view.php?id=1917
-            $compiler->write("(function() use (\$context, \$blocks, \$macros) { // TRACER START\n");
+            $compiler->subcompile(new ClosureOpenNode());
+            $compiler->raw(PHP_EOL);
+
             $compiler->indent();
             parent::compile($compiler);
             $compiler->outdent();
-            $compiler->write("})(); // TRACER END\n");
+            $compiler->subcompile(new ClosureEndNode());
+            $compiler->raw(PHP_EOL);
 
             // Stop tracing
-            $compiler->subcompile(new FunctionExpression($this->tracer->getTwigFunctionTraceEnd()->getName(), $templateNameArgumentsNode, 0), false);
-            $compiler->raw(';');
+            $compiler->subcompile(new TwigFunctionInvocationNode($this->tracer->getTwigFunctionTraceEnd(), $tracerArguments), false);
         }
 
     }
