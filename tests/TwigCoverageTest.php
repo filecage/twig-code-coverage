@@ -26,16 +26,20 @@
 
             $coverage = array_shift($coverages);
             $this->assertSame('hello.twig', $coverage->getTemplateName());
-            $this->assertSame([38, 39, 40, 46, 47, 48, 49, 57, 59, 62, 63, 64, 66], $coverage->getCalledLines());
-            $this->assertSame([51, 52, 53, 55], $coverage->getUncalledLines());
-            $this->assertSame("Hello !
+            $this->assertSame([39, 40, 41, 47, 48, 49, 50, 58, 60, 63, 64, 65, 67], $coverage->getCalledLines());
+            $this->assertSame([52, 53, 54, 56], $coverage->getUncalledLines());
+            $this->assertSame(
+                <<<ExpectedHtml
+                Hello !
+                
+                You can do
+                <ul>
+                    <li>Nothing</li>
+                </ul>
+                here
 
-You can do
-<ul>
-    <li>Nothing</li>
-</ul>
-here
-", $html);
+                ExpectedHtml, $html);
+        }
         }
 
     }
