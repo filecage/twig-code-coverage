@@ -4,10 +4,7 @@
 
     use Twig\TwigFunction;
 
-    /**
-     * @internal
-     */
-    class Tracer {
+    final class Tracer {
 
         private string $namespace;
         private RenderEngineCoverageDriver $renderEngineCoverageDriver;
