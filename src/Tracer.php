@@ -13,6 +13,11 @@
         /** @var TemplateCoverageResult[] Array containing the coverages by template filename */
         private array $coverages = [];
 
+        /**
+         * @param string $namespace
+         * @param RenderEngineCoverageDriver $renderEngineCoverageDriver
+         * @internal
+         */
         function __construct(string $namespace, RenderEngineCoverageDriver $renderEngineCoverageDriver) {
             $this->namespace = $namespace;
             $this->renderEngineCoverageDriver = $renderEngineCoverageDriver;
