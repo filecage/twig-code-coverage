@@ -73,6 +73,19 @@
             });
         }
 
+        /**
+         * @internal
+         */
+        function getTwigFunctionContinue() : TwigFunction {
+            return new TwigFunction($this->getFunctionName('continue'), function () {
+                // When we're continuing, we have to ignore this and the next line (next line is the next closure opener)
+                $calleeLine = $this->getCurrentCalleeLineNumber();
+                $this->currentCoverageRun->ignore($calleeLine, $calleeLine + 1);
+
+                xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
+            });
+        }
+
         private function clearCoverageBufferAndWriteToContainer (NestableCoverageContainer $coverageContainer) : void {
             $overallCoverageStatistics = xdebug_get_code_coverage();
             xdebug_stop_code_coverage(true);
