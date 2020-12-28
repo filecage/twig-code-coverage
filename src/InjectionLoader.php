@@ -22,6 +22,7 @@
         }
 
         function getSourceContext(string $name): Source {
+            $this->tracer->notifyNextTemplateWillBeLoaded($name);
             $source = $this->innerLoader->getSourceContext($name);
 
             return new Source($this->wrapSourceCodeInTracerFunctions($source->getCode(), $source->getName()), $source->getName(), $source->getPath());

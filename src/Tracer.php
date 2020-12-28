@@ -23,8 +23,27 @@
             $this->renderEngineCoverageDriver = $renderEngineCoverageDriver;
         }
 
+        /**
+         * Returns a list of all coverage results
+         *
+         * @return TemplateCoverageResult[]
+         */
         function getCoverages(): array {
             return $this->coverages;
+        }
+
+        /**
+         * Used to notify the Tracer that a new template will be loaded soon (causing the xdebug coverage to be
+         * overwritten). If there is a coverage trace in progress, it means a template has been included and the
+         * coverage buffer needs to be written to the current coverage container.
+         *
+         * @param string $templateName
+         * @internal
+         */
+        function notifyNextTemplateWillBeLoaded (string $templateName) : void {
+            if ($this->currentCoverageRun !== null) {
+                $this->clearCoverageBufferAndWriteToContainer($this->currentCoverageRun);
+            }
         }
 
         /**
