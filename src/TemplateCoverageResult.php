@@ -40,8 +40,12 @@
 
         function getCalledLinesPercentage(): string {
             $calledLinesCount = count($this->getCalledLines());
+            $uncalledLinesCount = count($this->getUncalledLines());
+            if ($uncalledLinesCount === 0) {
+                return '0';
+            }
 
-            return round($calledLinesCount / ($calledLinesCount + count($this->getUncalledLines())), 4) * 100;
+            return round($calledLinesCount / ($calledLinesCount + $uncalledLinesCount), 4) * 100;
         }
 
     }
